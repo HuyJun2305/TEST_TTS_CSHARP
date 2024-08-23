@@ -1,0 +1,190 @@
+﻿@model IEnumerable<AppView.Models.Staff>
+
+@{
+    ViewData["Title"] = "Quản lý Nhân viên";
+
+    // Lấy giá trị từ query
+    var query = Context.Request.Query;
+    var searchText = query["searchText"].ToString();
+    var searchStatus = query["searchStatus"].ToString();
+
+    // Danh sách các tùy chọn trạng thái
+    var statusOptions = new Dictionary<string, string>
+    {
+        { "", "Tất cả" },
+        { "1", "Hoạt động" },
+        { "0", "Không hoạt động" }
+    };
+
+    // Tạo biến để xác định giá trị đã chọn
+    var selectedStatus = statusOptions.ContainsKey(searchStatus) ? searchStatus : "";
+}
+
+<!-- Modal Thêm mới -->
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createModalLabel">Thêm Nhân viên mới</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="createForm" method="post" action="@Url.Action("Create", "Staff")">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="Name">Tên nhân viên</label>
+                        <input type="text" class="form-control" id="Name" name="Name" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="EmailFe">Email FE</label>
+                        <input type="email" class="form-control" id="EmailFe" name="EmailFe" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="EmailFpt">Email FPT</label>
+                        <input type="email" class="form-control" id="EmailFpt" name="EmailFpt" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="StaffCode">Mã nhân viên</label>
+                        <input type="text" class="form-control" id="StaffCode" name="StaffCode" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="Status">Trạng thái</label>
+                        <select class="form-control" id="Status" name="Status" required>
+                            <option value="">Chọn trạng thái</option>
+                            <option value="1">Hoạt động</option>
+                            <option value="0">Không hoạt động</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+
+    <!-- Bộ lọc tìm kiếm -->
+    <div class="filter-section mb-4" style="border: 1px solid #ddd; padding: 15px; border-radius: 5px; backdrop-filter: blur(10px);">
+        <form asp-action="Index" method="get" class="form-inline">
+            <div class="form-group mr-2">
+                <label for="searchText">Tìm kiếm</label>
+                <input type="text" id="searchText" name="searchText" value="@searchText" class="form-control" placeholder="Tên, email, mã nhân viên" />
+            </div>
+            <div class="form-group mr-2">
+                <label for="searchStatus">Trạng thái</label>
+                <select id="searchStatus" name="searchStatus" class="form-control">
+                    @foreach (var option in statusOptions)
+                    {
+                        var isSelected = selectedStatus == option.Key ? "selected" : "";
+                        <option value="@option.Key" selected="@isSelected">@option.Value</option>
+                    }
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+        </form>
+    </div>
+
+    <!-- Danh sách nhân viên -->
+    <div class="staff-list-section" style="border: 1px solid #ddd; padding: 15px; border-radius: 5px; backdrop-filter: blur(10px);">
+        <!-- Nút Thêm mới -->
+        <a href="#" data-toggle="modal" data-target="#createModal" class="btn btn-success ml-2">Thêm mới</a>
+
+       
+
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Mã nhân viên</th>
+                    <th>Tên nhân viên</th>
+                    <th>Email FPT</th>
+                    <th>Email FE</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    int counter = 1;
+                    foreach (var staff in Model)
+                    {
+                        var statusText = staff.Status == 1 ? "Hoạt động" : "Không hoạt động";
+                        <tr>
+                            <td>@counter</td>
+                            <td>@staff.StaffCode</td>
+                            <td>@staff.Name</td>
+                            <td>@staff.AccountFpt</td>
+                            <td>@staff.AccountFe</td>
+                            <td>@statusText</td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@staff.Id" class="btn btn-warning btn-sm">Sửa</a>
+                                <a asp-action="Details" asp-route-id="@staff.Id" class="btn btn-info btn-sm">Xem</a>
+                                <a asp-action="Delete" asp-route-id="@staff.Id" class="btn btn-danger btn-sm">Xóa</a>
+                            </td>
+                        </tr>
+                        counter++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center">Không có nhân viên nào được tìm thấy.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('createForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Ngăn chặn hành vi gửi form mặc định
+
+            // Lấy dữ liệu từ form
+            var formData = new FormData(this);
+
+            // Tạo đối tượng JSON để gửi
+            var data = {
+                Name: formData.get('Name'),
+                AccountFe: formData.get('EmailFe'),
+                AccountFpt: formData.get('EmailFpt'),
+                StaffCode: formData.get('StaffCode'),
+                Status: parseInt(formData.get('Status'), 10) // Đảm bảo trạng thái là số nguyên
+            };
+
+            // Gửi yêu cầu POST
+            fetch('@Url.Action("Create", "Staff")', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => { throw new Error(data.message || 'Unknown error'); });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert('Nhân viên đã được thêm thành công.');
+                    $('#createModal').modal('hide'); // Đóng modal
+                    // Cập nhật danh sách nhân viên nếu cần
+                })
+                .catch(error => {
+                    alert('Đã xảy ra lỗi: ' + error.message);
+                });
+        });
+    });
+</script>

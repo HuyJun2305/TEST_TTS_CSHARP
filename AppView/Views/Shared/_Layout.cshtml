@@ -1,0 +1,218 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AppView</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/AppView.styles.css" asp-append-version="true" />
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            background-color: #343a40;
+            color: #fff;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+            .sidebar.collapsed {
+                width: 70px; /* Kích thước sidebar khi thu nhỏ */
+            }
+
+            .sidebar h4 {
+                color: #fff;
+                text-align: center;
+                padding-bottom: 20px;
+                border-bottom: 1px solid #495057;
+                transition: opacity 0.3s;
+            }
+
+            .sidebar.collapsed h4 {
+                display: none; /* Ẩn tiêu đề khi sidebar thu nhỏ */
+            }
+
+            .sidebar .toggle-btn {
+                display: block;
+                color: #ced4da;
+                cursor: pointer;
+                font-size: 24px;
+                text-align: center;
+                margin-bottom: 10px;
+            }
+
+            .sidebar ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .sidebar li {
+                margin: 0;
+                padding: 0;
+            }
+
+            .sidebar a {
+                padding: 10px 20px;
+                font-size: 16px;
+                color: #ced4da;
+                display: flex;
+                align-items: center;
+                text-decoration: none;
+                transition: background-color 0.3s, color 0.3s;
+            }
+
+            .sidebar.collapsed a {
+                padding: 10px 10px;
+                justify-content: center; /* Căn giữa icon khi thu nhỏ */
+            }
+
+            .sidebar.collapsed .link-text {
+                display: none; /* Ẩn text khi sidebar thu nhỏ */
+            }
+
+            .sidebar a:hover {
+                background-color: #495057;
+                color: #fff;
+            }
+
+            .sidebar i {
+                margin-right: 10px;
+                transition: margin-right 0.3s;
+            }
+
+            .sidebar.collapsed i {
+                margin-right: 0; /* Giảm khoảng cách khi sidebar thu nhỏ */
+            }
+
+        .logout {
+            margin-top: auto;
+            padding: 15px 20px;
+            border-top: 1px solid #495057;
+        }
+
+        .sidebar.collapsed .logout {
+            padding: 10px 10px;
+            justify-content: center; /* Căn giữa icon khi thu nhỏ */
+        }
+
+        .logout-button {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            padding: 0;
+            margin: 0;
+            transition: color 0.3s;
+        }
+
+            .logout-button i {
+                margin-right: 10px;
+                transition: margin-right 0.3s;
+            }
+
+            .logout-button:hover {
+                color: #c82333;
+            }
+
+        .sidebar.collapsed .logout-button i {
+            margin-right: 0; /* Giảm khoảng cách khi sidebar thu nhỏ */
+        }
+
+        .sidebar.collapsed .logout-button .link-text {
+            display: none; /* Ẩn text khi sidebar thu nhỏ */
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+
+            .content.collapsed {
+                margin-left: 70px; /* Khoảng cách margin-left khi sidebar thu nhỏ */
+            }
+
+        .jumbotron {
+            background-color: #f8f9fa;
+            border-radius: 0.3rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="navbar-brand">AppView</div>
+            <div class="user-info">
+                <div class="welcome-message">Xin chào, <span id="username">Người dùng</span></div>
+                <img src="~/images/avatar.png" alt="User Avatar" />
+            </div>
+        </nav>
+    </header>
+    <div class="sidebar" id="sidebar">
+        <span class="toggle-btn" id="toggleSidebarBtn">
+            <i class="fas fa-bars"></i>
+        </span>
+        <ul>
+            <li><a asp-controller="" asp-action=""><i class="fas fa-calendar-alt"></i> <span class="link-text">Quản lý học kì</span></a></li>
+            <li><a asp-controller="" asp-action=""><i class="fas fa-chalkboard-teacher"></i> <span class="link-text">Quản lý bộ môn</span></a></li>
+            <li><a asp-controller="" asp-action=""><i class="fas fa-building"></i> <span class="link-text">Quản lý cơ sở mục</span></a></li>
+            <li><a asp-controller="" asp-action=""><i class="fas fa-tasks"></i> <span class="link-text">Quản lý chức vụ</span></a></li>
+            <li><a asp-controller="" asp-action=""><i class="fas fa-users"></i> <span class="link-text">Quản lý nhân viên</span></a></li>
+            <li><a asp-controller="" asp-action=""><i class="fas fa-layer-group"></i> <span class="link-text">Quản lý lớp môn</span></a></li>
+            <li><a asp-controller="" asp-action=""><i class="fas fa-book"></i> <span class="link-text">Quản lý môn học</span></a></li>
+            <li><a asp-controller="" asp-action=""><i class="fas fa-door-open"></i> <span class="link-text">Quy định phòng thi</span></a></li>
+        </ul>
+    </div>
+
+    <div class="content" id="mainContent">
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <!-- Thêm jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- Thêm Bootstrap JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById("toggleSidebarBtn").addEventListener("click", function () {
+            var sidebar = document.getElementById("sidebar");
+            var content = document.getElementById("mainContent");
+
+            sidebar.classList.toggle("collapsed");
+            content.classList.toggle("collapsed");
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>
